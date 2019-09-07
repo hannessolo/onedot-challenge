@@ -1,0 +1,26 @@
+{
+  "name": "onedot-task",
+  "version": "1.0.0",
+  "description": "Task from onedot spec sheet",
+  "scripts": {
+    "build": "webpack -p",
+    "dev-server": "webpack-dev-server",
+    "test": "jest"
+  },
+  "author": "Hannes Hertach",
+  "license": "ISC",
+  "dependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "jest": "^24.0.0",
+    "path": "^0.12.7",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-router-dom": "^5.0.1",
+    "webpack": "^4.39.1",
+    "webpack-cli": "^3.3.6",
+    "webpack-dev-server": "^3.7.2"
+  }
+}
