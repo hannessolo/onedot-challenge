@@ -2,7 +2,7 @@ import React from "react";
 import { HashRouter as Router, Route, Link } from "react-router-dom";
 import styled from "styled-components";
 import issues from "../business/issue.js";
-import { MdSync, MdLink, MdCallSplit, MdErrorOutline, MdArrowBack } from 'react-icons/md';
+import { MdSync, MdLink, MdCallSplit, MdErrorOutline, MdArrowBack, MdClose } from 'react-icons/md';
 
 const Title = styled.h1`
   font-family: "Raleway", sans-serif;
@@ -64,15 +64,22 @@ const BackButton = styled.span`
   color: black;
 `;
 
+const DeleteButton = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10px;
+`;
+
 export default function DetailView({ dict, dispatch }) {
   function update(id, key, value) {
     dispatch({
       type: "update",
       payload: {
-        id: id,
-        key: key,
-        value: value,
-        dict: dict
+        id,
+        key,
+        value,
+        dict
       }
     });
   }
@@ -81,9 +88,19 @@ export default function DetailView({ dict, dispatch }) {
     dispatch({
       type: "create",
       payload: {
-        dict: dict
+        dict
       }
     });
+  }
+
+  function deleteItem(id) {
+    dispatch({
+      type: 'delete',
+      payload: {
+        dict,
+        id
+      }
+    })
   }
 
   return (
@@ -102,7 +119,10 @@ export default function DetailView({ dict, dispatch }) {
               defaultValue={kvpair.value}
               onChange={e => update(id, kvpair.key, e.target.value)}
             />
-            <Error
+            <DeleteButton onClick={() => deleteItem(id)} title="delete">
+              <MdClose />
+            </DeleteButton>
+            <Error title="duplicate"
               visible={kvpair.issues.reduce(
                 (acc, cur) => acc || cur.type == issues.DUPLICATE,
                 false
@@ -110,7 +130,7 @@ export default function DetailView({ dict, dispatch }) {
             >
               <MdErrorOutline />
             </Error>
-            <Error
+            <Error title="fork"
               visible={kvpair.issues.reduce(
                 (acc, cur) => acc || cur.type == issues.FORK,
                 false
@@ -118,7 +138,7 @@ export default function DetailView({ dict, dispatch }) {
             >
               <MdCallSplit />
             </Error>
-            <Error
+            <Error title="chain"
               visible={kvpair.issues.reduce(
                 (acc, cur) => acc || cur.type == issues.CHAIN,
                 false
@@ -126,7 +146,7 @@ export default function DetailView({ dict, dispatch }) {
             >
               <MdLink />
             </Error>
-            <Error
+            <Error title="cycle"
               visible={kvpair.issues.reduce(
                 (acc, cur) => acc || cur.type == issues.CYCLE,
                 false
