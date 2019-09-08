@@ -27,6 +27,7 @@ const TableRow = styled.div`
   padding: 10px;
   font-size: 16pt;
   font-family: "Raleway", sans-serif;
+  display: flex;
 
   :hover {
     background: gray;
@@ -36,6 +37,7 @@ const TableRow = styled.div`
 
 const StyledLink = styled(Link)`
   text-decoration: none;
+  flex-basis: 100%;
   color: black;
 `;
 
@@ -58,6 +60,10 @@ const CreateNewDictButton = styled.div`
   transform: scale(1.2);
 `;
 
+const DeleteButton = styled.div`
+  align-self: flex-end;
+`;
+
 export default function Overview(props) {
   const [dicts, dispatch] = useContext(DictsContext);
   const [creating, setCreating] = useState(false);
@@ -68,9 +74,18 @@ export default function Overview(props) {
     dispatch({
       type: 'newDict',
       payload: {
-        name: name
+        name
       }
     });
+  }
+
+  function deleteDictionary(name) {
+    dispatch({
+      type: 'deleteDict',
+      payload: {
+        name
+      }
+    })
   }
 
   return (
@@ -80,6 +95,7 @@ export default function Overview(props) {
         {dicts.map(dict => (
           <TableRow key={dict.name}>
             <StyledLink to={`/detail/${dict.name}`}>{dict.name}</StyledLink>
+            <DeleteButton onClick={() => deleteDictionary(dict.name)}><MdClose /></DeleteButton>
           </TableRow>
         ))}
         {!creating || (

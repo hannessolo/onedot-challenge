@@ -20,6 +20,8 @@ const reducer = (state, action) => {
       pl.dict.remove(pl.id);
       return [...state];
     }
+    case 'deleteDict':
+      return state.filter(dict => dict.name != action.payload.name);
     default:
       return state;
   }
