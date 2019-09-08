@@ -66,7 +66,6 @@ const BackButton = styled.span`
 
 export default function DetailView({ dict, dispatch }) {
   function update(id, key, value) {
-    console.log(`id ${id}, key ${key}, value ${value}`);
     dispatch({
       type: "update",
       payload: {

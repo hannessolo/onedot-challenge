@@ -1,0 +1,17 @@
+version: "3"
+services:
+  frontend:
+    build: .
+    restart: always
+    ports:
+    - "8090:8090"
+    labels:
+    - "caddy.targetpath=/"
+    - "caddy.targetport=8090"
+    - "caddy.address=onedot.hanneshertach.com"
+    - "caddy.proxy.transparent="
+
+networks:
+  default:
+    external:
+      name: web

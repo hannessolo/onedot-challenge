@@ -20,7 +20,6 @@ export default class Dictionary {
     this.verify(newPair);
     this.kvpairs[id] = newPair;
     this.size++;
-    console.log(this.kvpairs)
   }
 
   get(id) {
@@ -50,7 +49,6 @@ export default class Dictionary {
 
   // Mark issues that a new pair causes
   verify(newPair) {
-    console.log('verifiying...')
 
     for (let [id, pair] of Object.entries(this.kvpairs)) {
 

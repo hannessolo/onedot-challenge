@@ -12,7 +12,6 @@ const reducer = (state, action) => {
       action.payload.dict.put('', '', action.payload.dict.size);
       return [...state];
     case 'newDict':
-      console.log(state);
       state.push(new Dictionary(action.payload.name));
       return [...state];
     default:
