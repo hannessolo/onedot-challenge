@@ -2,9 +2,10 @@ import issues from './issue.js';
 
 export default class Dictionary {
 
-  constructor(kvpairs = {}) {
-    this.hasCycle = false;
+  constructor(name, kvpairs = {}) {
     this.kvpairs = kvpairs;
+    this.name = name;
+    this.issues = 0;
 
     this.get = this.get.bind(this);
   }

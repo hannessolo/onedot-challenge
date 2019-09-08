@@ -3,7 +3,6 @@ var path = require("path");
 
 var BUILD_DIR = path.resolve(__dirname, "public");
 var APP_DIR = path.resolve(__dirname, "app");
-var TEST_DIR = path.resolve(__dirname, "test");
 
 var config = {
   entry: APP_DIR + '/index.jsx',
@@ -18,15 +17,7 @@ var config = {
         include: APP_DIR,
         loader: 'babel-loader',
         options: {
-          presets: ['react', 'env']
-        }
-      },
-      {
-        test: /\.test\.js?/,
-        include: TEST_DIR,
-        loader: 'babel-loader',
-        options: {
-          presets: ['env']
+          presets: ['stage-0', 'react', 'env']
         }
       }
     ]

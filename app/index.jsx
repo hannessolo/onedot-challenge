@@ -1,5 +1,9 @@
 import React from 'react';
 import { render } from 'react-dom';
-import Overview from './ui/Overview.jsx';
+import App from './ui/App.jsx';
+import Routes from './ui/Routes.jsx';
 
-render(<Overview />, document.getElementById('app'));
+render(
+  <App>
+    <Routes />
+  </App>, document.getElementById('app'));
