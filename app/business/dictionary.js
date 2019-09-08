@@ -2,10 +2,11 @@ import issues from './issue.js';
 
 export default class Dictionary {
 
-  constructor(name, kvpairs = {}) {
-    this.kvpairs = kvpairs;
+  constructor(name) {
+    this.kvpairs = {};
     this.name = name;
     this.issues = 0;
+    this.size = 0;
 
     this.get = this.get.bind(this);
   }
@@ -18,6 +19,8 @@ export default class Dictionary {
     };
     this.verify(newPair);
     this.kvpairs[id] = newPair;
+    this.size++;
+    console.log(this.kvpairs)
   }
 
   get(id) {
@@ -42,10 +45,12 @@ export default class Dictionary {
         }
       }
     }
+    this.size--;
   }
 
   // Mark issues that a new pair causes
   verify(newPair) {
+    console.log('verifiying...')
 
     for (let [id, pair] of Object.entries(this.kvpairs)) {
 

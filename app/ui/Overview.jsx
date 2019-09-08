@@ -1,7 +1,8 @@
-import React, { useContext } from 'react';
-import styled from 'styled-components';
-import { DictsContext } from '../services/DictsProvider.jsx';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import React, { useContext, useState } from "react";
+import styled from "styled-components";
+import { DictsContext } from "../services/DictsProvider.jsx";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { MdCheck, MdClose } from "react-icons/md";
 
 const StyledOverview = styled.div`
   position: relative;
@@ -12,7 +13,7 @@ const StyledOverview = styled.div`
 `;
 
 const Title = styled.h1`
-  font-family: 'Raleway', sans-serif;
+  font-family: "Raleway", sans-serif;
 `;
 
 const TableContainer = styled.div`
@@ -25,7 +26,7 @@ const TableContainer = styled.div`
 const TableRow = styled.div`
   padding: 10px;
   font-size: 16pt;
-  font-family: 'Raleway', sans-serif;
+  font-family: "Raleway", sans-serif;
 
   :hover {
     background: gray;
@@ -37,22 +38,66 @@ const StyledLink = styled(Link)`
   color: black;
 `;
 
-export default function Overview(props) {
+const DictNameBox = styled.input`
+  font-size: 16pt;
+  font-family: "Raleway", sans-serif;
+  padding: 0.5em;
+  border: none;
+  border-radius: 3px;
+  flex-basis: 100%;
+`;
 
-  const [dicts, _] = useContext(DictsContext);
+const CreateNewDict = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const CreateNewDictButton = styled.div`
+  padding: 5px;
+  transform: scale(1.2);
+`;
+
+export default function Overview(props) {
+  const [dicts, dispatch] = useContext(DictsContext);
+  const [creating, setCreating] = useState(false);
+  const [name, setName] = useState("");
+
+  function newDictionary() {
+    setCreating(false);
+    dispatch({
+      type: 'newDict',
+      payload: {
+        name: name
+      }
+    });
+  }
 
   return (
-      <StyledOverview>
-        <Title>Dictionary Overview</Title>
-        <TableContainer>
-          { dicts.map(dict => (
-            <TableRow key={dict.name}>
-              <StyledLink to={`/detail/${dict.name}`}>
-                { dict.name }
-              </StyledLink>
-            </TableRow>
-          )) }
-        </TableContainer>
-      </StyledOverview>
+    <StyledOverview>
+      <Title>Dictionary Overview</Title>
+      <TableContainer>
+        {dicts.map(dict => (
+          <TableRow key={dict.name}>
+            <StyledLink to={`/detail/${dict.name}`}>{dict.name}</StyledLink>
+          </TableRow>
+        ))}
+        {!creating || (
+          <TableRow>
+            <CreateNewDict>
+              <DictNameBox onChange={e => setName(e.target.value)} />
+              <CreateNewDictButton onClick={() => setCreating(false)}>
+                <MdClose />
+              </CreateNewDictButton>
+              <CreateNewDictButton onClick={newDictionary}>
+                <MdCheck />
+              </CreateNewDictButton>
+            </CreateNewDict>
+          </TableRow>
+        )}
+        {creating || (
+          <TableRow onClick={() => setCreating(true)}>Create new...</TableRow>
+        )}
+      </TableContainer>
+    </StyledOverview>
   );
 }

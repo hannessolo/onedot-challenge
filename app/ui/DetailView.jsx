@@ -1,15 +1,18 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import { HashRouter as Router, Route, Link } from "react-router-dom";
+import styled from "styled-components";
+import issues from "../business/issue.js";
+import { MdSync, MdLink, MdCallSplit, MdErrorOutline, MdArrowBack } from 'react-icons/md';
 
 const Title = styled.h1`
-  font-family: 'Raleway', sans-serif;
+  font-family: "Raleway", sans-serif;
 `;
 
 const DetailContainer = styled.div`
-width: 80%;
-max-width: 800px;
-border: 2px solid gray;
-border-radius: 5px;
+  width: 80%;
+  max-width: 800px;
+  border: 2px solid gray;
+  border-radius: 5px;
 `;
 
 const AlignCenter = styled.div`
@@ -19,20 +22,123 @@ const AlignCenter = styled.div`
 `;
 
 const DetailItem = styled.div`
-padding: 10px;
-font-size: 16pt;
-font-family: 'Raleway', sans-serif;
+  padding: 10px;
+  font-size: 16pt;
+  font-family: "Raleway", sans-serif;
+  display: flex;
+  flex-direction: row;
+  background-color: ${props => (props.issues > 0 ? "#fa5c28" : "white")};
 
-:hover {
-  background: gray;
-}
+  :hover {
+    background: gray;
+  }
 `;
 
-export default function DetailView(props) {
-  return (<AlignCenter>
-      <Title>{props.dict.name}</Title>
+const KeyValue = styled.input`
+  font-size: 16pt;
+  font-family: "Raleway", sans-serif;
+  padding: 0.5em;
+  border: none;
+  border-radius: 3px;
+`;
+
+const Key = styled(KeyValue)`
+  flex-basis: 50%;
+  margin-right: 5px;
+`;
+
+const Value = styled(KeyValue)`
+  flex-basis: 50%;
+  margin-left: 5px;
+`;
+
+const Error = styled.div`
+  display: ${props => (props.visible ? "flex" : "none")};
+  align-items: center;
+  justify-content: center;
+`;
+
+const BackButton = styled.span`
+  float: left;
+  text-decoration: none;
+  color: black;
+`;
+
+export default function DetailView({ dict, dispatch }) {
+  function update(id, key, value) {
+    console.log(`id ${id}, key ${key}, value ${value}`);
+    dispatch({
+      type: "update",
+      payload: {
+        id: id,
+        key: key,
+        value: value,
+        dict: dict
+      }
+    });
+  }
+
+  function create() {
+    dispatch({
+      type: "create",
+      payload: {
+        dict: dict
+      }
+    });
+  }
+
+  return (
+    <AlignCenter>
+      <Title><BackButton><Link to=''><MdArrowBack /></Link></BackButton>{dict.name}</Title>
       <DetailContainer>
-        <DetailItem>Add pair...</DetailItem>
+        {Object.entries(dict.kvpairs).map(([id, kvpair]) => (
+          <DetailItem key={id} issues={kvpair.issues.length}>
+            <Key
+              type="text"
+              defaultValue={kvpair.key}
+              onChange={e => update(id, e.target.value, kvpair.value)}
+            />
+            <Value
+              type="text"
+              defaultValue={kvpair.value}
+              onChange={e => update(id, kvpair.key, e.target.value)}
+            />
+            <Error
+              visible={kvpair.issues.reduce(
+                (acc, cur) => acc || cur.type == issues.DUPLICATE,
+                false
+              )}
+            >
+              <MdErrorOutline />
+            </Error>
+            <Error
+              visible={kvpair.issues.reduce(
+                (acc, cur) => acc || cur.type == issues.FORK,
+                false
+              )}
+            >
+              <MdCallSplit />
+            </Error>
+            <Error
+              visible={kvpair.issues.reduce(
+                (acc, cur) => acc || cur.type == issues.CHAIN,
+                false
+              )}
+            >
+              <MdLink />
+            </Error>
+            <Error
+              visible={kvpair.issues.reduce(
+                (acc, cur) => acc || cur.type == issues.CYCLE,
+                false
+              )}
+            >
+              <MdSync />
+            </Error>
+          </DetailItem>
+        ))}
+        <DetailItem onClick={create}>Add pair...</DetailItem>
       </DetailContainer>
-    </AlignCenter>);
+    </AlignCenter>
+  );
 }
