@@ -2,7 +2,14 @@ import React from "react";
 import { HashRouter as Router, Route, Link } from "react-router-dom";
 import styled from "styled-components";
 import issues from "../business/issue.js";
-import { MdSync, MdLink, MdCallSplit, MdErrorOutline, MdArrowBack, MdClose } from 'react-icons/md';
+import {
+  MdSync,
+  MdLink,
+  MdCallSplit,
+  MdErrorOutline,
+  MdArrowBack,
+  MdClose
+} from "react-icons/md";
 
 const Title = styled.h1`
   font-family: "Raleway", sans-serif;
@@ -72,15 +79,16 @@ const DeleteButton = styled.div`
 `;
 
 const CreateItem = styled(DetailItem)`
-  background-color: ${props => props.disabled ? 'lightgray' : 'white'};
+  background-color: ${props => (props.disabled ? "lightgray" : "white")};
 
   :hover {
-    background-color: ${props => props.disabled ? 'light-gray' : 'dark-gray'};
-    cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
+    background-color: ${props => (props.disabled ? "light-gray" : "dark-gray")};
+    cursor: ${props => (props.disabled ? "not-allowed" : "pointer")};
   }
 `;
 
 export default function DetailView({ dict, dispatch }) {
+  // Update the kv-pair with the id
   function update(id, key, value) {
     dispatch({
       type: "update",
@@ -93,9 +101,10 @@ export default function DetailView({ dict, dispatch }) {
     });
   }
 
+  // Create a new kv-pair
   function create() {
+    // Block creation if the dict contains a cycle
     if (dict.hasCycle) {
-      console.log('cannot create - has cycle');
       return;
     }
 
@@ -107,19 +116,27 @@ export default function DetailView({ dict, dispatch }) {
     });
   }
 
+  // Delete the kv-pair with the id
   function deleteItem(id) {
     dispatch({
-      type: 'delete',
+      type: "delete",
       payload: {
         dict,
         id
       }
-    })
+    });
   }
 
   return (
     <AlignCenter>
-      <Title><BackButton><Link to=''><MdArrowBack /></Link></BackButton>{dict.name}</Title>
+      <Title>
+        <BackButton>
+          <Link to="">
+            <MdArrowBack />
+          </Link>
+        </BackButton>
+        {dict.name}
+      </Title>
       <DetailContainer>
         {Object.entries(dict.kvpairs).map(([id, kvpair]) => (
           <DetailItem key={id} issues={kvpair.issues.length}>
@@ -136,7 +153,8 @@ export default function DetailView({ dict, dispatch }) {
             <DeleteButton onClick={() => deleteItem(id)} title="delete">
               <MdClose />
             </DeleteButton>
-            <Error title="duplicate"
+            <Error
+              title="duplicate"
               visible={kvpair.issues.reduce(
                 (acc, cur) => acc || cur.type == issues.DUPLICATE,
                 false
@@ -144,7 +162,8 @@ export default function DetailView({ dict, dispatch }) {
             >
               <MdErrorOutline />
             </Error>
-            <Error title="fork"
+            <Error
+              title="fork"
               visible={kvpair.issues.reduce(
                 (acc, cur) => acc || cur.type == issues.FORK,
                 false
@@ -152,7 +171,8 @@ export default function DetailView({ dict, dispatch }) {
             >
               <MdCallSplit />
             </Error>
-            <Error title="chain"
+            <Error
+              title="chain"
               visible={kvpair.issues.reduce(
                 (acc, cur) => acc || cur.type == issues.CHAIN,
                 false
@@ -160,7 +180,8 @@ export default function DetailView({ dict, dispatch }) {
             >
               <MdLink />
             </Error>
-            <Error title="cycle"
+            <Error
+              title="cycle"
               visible={kvpair.issues.reduce(
                 (acc, cur) => acc || cur.type == issues.CYCLE,
                 false
@@ -170,7 +191,9 @@ export default function DetailView({ dict, dispatch }) {
             </Error>
           </DetailItem>
         ))}
-        <CreateItem onClick={create} disabled={dict.hasCycle}>Add pair...</CreateItem>
+        <CreateItem onClick={create} disabled={dict.hasCycle}>
+          Add pair...
+        </CreateItem>
       </DetailContainer>
     </AlignCenter>
   );

@@ -31,7 +31,7 @@ const TableRow = styled.div`
 
   :hover {
     background: gray;
-    cursor: 'pointer';
+    cursor: "pointer";
   }
 `;
 
@@ -72,7 +72,7 @@ export default function Overview(props) {
   function newDictionary() {
     setCreating(false);
     dispatch({
-      type: 'newDict',
+      type: "newDict",
       payload: {
         name
       }
@@ -81,11 +81,11 @@ export default function Overview(props) {
 
   function deleteDictionary(name) {
     dispatch({
-      type: 'deleteDict',
+      type: "deleteDict",
       payload: {
         name
       }
-    })
+    });
   }
 
   return (
@@ -95,7 +95,9 @@ export default function Overview(props) {
         {dicts.map(dict => (
           <TableRow key={dict.name}>
             <StyledLink to={`/detail/${dict.name}`}>{dict.name}</StyledLink>
-            <DeleteButton onClick={() => deleteDictionary(dict.name)}><MdClose /></DeleteButton>
+            <DeleteButton onClick={() => deleteDictionary(dict.name)}>
+              <MdClose />
+            </DeleteButton>
           </TableRow>
         ))}
         {!creating || (
