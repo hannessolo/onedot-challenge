@@ -1,5 +1,8 @@
 import issues from './issue.js';
 
+// Implementation of a key-value store that is allowed to have dirty data
+// Assumptions: Only one chain is allowed to exist - should be enforced through
+// the UI
 export default class Dictionary {
 
   constructor(name) {
@@ -7,6 +10,7 @@ export default class Dictionary {
     this.name = name;
     this.issues = 0;
     this.size = 0;
+    this.hasCycle = false;
 
     this.get = this.get.bind(this);
   }
@@ -35,11 +39,51 @@ export default class Dictionary {
     delete this.kvpairs[id];
     for (let issue of pair.issues) {
       // remove issues
+      // Handle forks and duplicates
       if (issue.type == issues.FORK || issue.type == issues.DUPLICATE) {
         let otherNode = issue.other;
         for (let candidate of otherNode.issues.filter(issue => issue.type == issues.DUPLICATE || issue.type == issues.FORK)) {
           if (candidate.other == pair) {
             otherNode.issues.splice(otherNode.issues.indexOf(candidate), 1);
+          }
+        }
+      }
+      // Handle chains and cycles
+      if (issue.type == issues.CHAIN || issue.type == issues.CYCLE) {
+        let nextNode = issue.next;
+        let prevNode = issue.prev;
+
+        // Unmark the cycle if it is one
+        if (issue.type == issues.CYCLE) {
+          this.unmarkCycle(nextNode, pair, pair);
+        }
+
+        // Unlink with issue of next node
+        if (nextNode != null) {
+          for (let candidate of nextNode.issues.filter(issue => issue.type == issues.CHAIN)) {
+            if (candidate.prev == pair) {
+              // If it is the last link of the chain, delete the issue
+              if (candidate.next == null) {
+                nextNode.issues.splice(nextNode.issues.indexOf(candidate), 1);
+              // Otherwise, just unlink it
+              } else {
+                candidate.prev = null;
+              }
+            }
+          }
+        }
+        // Unlink with issue of previous node
+        if (prevNode != null) {
+          for (let candidate of prevNode.issues.filter(issue => issue.type == issues.CHAIN)) {
+            if (candidate.next == pair) {
+              // If it is the first link of the cahin, delete the issue
+              if (candidate.prev == null) {
+                prevNode.issues.splice(prevNode.issues.indexOf(candidate), 1);
+              // Else unlink
+              } else {
+                candidate.next = null;
+              }
+            }
           }
         }
       }
@@ -86,7 +130,6 @@ export default class Dictionary {
         }
 
         let f = this.followChain(pair, newPair, newPair, issue, false);
-        break;
       }
 
       // The key is equal to a value
@@ -124,7 +167,6 @@ export default class Dictionary {
         }
 
         let f = this.followChain(pair, newPair, newPair, issue, true);
-        break;
       }
 
       // The key is equal to another key
@@ -150,7 +192,6 @@ export default class Dictionary {
             other: newPair
           });
         }
-        break;
       }
     }
   }
@@ -184,6 +225,7 @@ export default class Dictionary {
         }
       }
 
+      this.hasCycle = true;
       return true;
     }
 
@@ -202,6 +244,22 @@ export default class Dictionary {
     }
 
     return foundCycle;
+  }
+
+  // Follow the cycle and unmark
+  unmarkCycle(currNode, lastVisited, firstNode) {
+    if (currNode == firstNode) {
+      this.hasCycle = false;
+      return;
+    }
+
+    for (let candidate of currNode.issues.filter(issue => issue.type == issues.CYCLE)) {
+      if (candidate.prev == lastVisited) {
+        candidate.type = issues.CHAIN;
+        this.unmarkCycle(candidate.next, currNode, firstNode);
+      }
+    }
+
   }
 
 }

@@ -30,6 +30,7 @@ const TableRow = styled.div`
 
   :hover {
     background: gray;
+    cursor: 'pointer';
   }
 `;
 

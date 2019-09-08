@@ -146,6 +146,46 @@ test('removing offending pair removes issue for forks', () => {
   expect(dict.get(1).issues.length).toBe(0);
 });
 
+test('removing offending pair removes issue for duplicates', () => {
+  let dict = new Dictionary();
+  let key = 'Stonegray';
+  let value = 'Dark Gray';
+  let ids = [0, 1];
+
+  for (let id in ids) {
+    dict.put(key, value, id);
+  }
+
+  dict.remove(0);
+  expect(dict.get(1).issues.length).toBe(0);
+});
+
+test('removing offending pair removes issue for chains', () => {
+  let dict = new Dictionary();
+  let shared = 'Dark Gray';
+  let key = 'Stonegray';
+  let value = 'Anthracite';
+
+  dict.put(key, shared, 0);
+  dict.put(shared, value, 1);
+
+  dict.remove(0);
+  expect(dict.get(1).issues.length).toBe(0);
+});
+
+test('emoving offending pair removes issue for cycles', () => {
+  let dict = new Dictionary();
+
+  let first = 'first';
+  let second = 'second';
+
+  dict.put(first, second, 0);
+  dict.put(second, first, 1);
+
+  dict.remove(0);
+  expect(dict.get(1).issues.length).toBe(0);
+});
+
 test('all function returns list of all pairs in dictionary', () => {
   let dict = new Dictionary();
 

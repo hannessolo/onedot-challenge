@@ -71,6 +71,15 @@ const DeleteButton = styled.div`
   margin-left: 10px;
 `;
 
+const CreateItem = styled(DetailItem)`
+  background-color: ${props => props.disabled ? 'lightgray' : 'white'};
+
+  :hover {
+    background-color: ${props => props.disabled ? 'light-gray' : 'dark-gray'};
+    cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
+  }
+`;
+
 export default function DetailView({ dict, dispatch }) {
   function update(id, key, value) {
     dispatch({
@@ -85,6 +94,11 @@ export default function DetailView({ dict, dispatch }) {
   }
 
   function create() {
+    if (dict.hasCycle) {
+      console.log('cannot create - has cycle');
+      return;
+    }
+
     dispatch({
       type: "create",
       payload: {
@@ -156,7 +170,7 @@ export default function DetailView({ dict, dispatch }) {
             </Error>
           </DetailItem>
         ))}
-        <DetailItem onClick={create}>Add pair...</DetailItem>
+        <CreateItem onClick={create} disabled={dict.hasCycle}>Add pair...</CreateItem>
       </DetailContainer>
     </AlignCenter>
   );
