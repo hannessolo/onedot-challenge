@@ -24,6 +24,10 @@ export default class Dictionary {
     return this.kvpairs[id];
   }
 
+  all() {
+    return Object.entries(this.kvpairs).map(([key, value]) => value);
+  }
+
   remove(id) {
     let pair = this.kvpairs[id];
     delete this.kvpairs[id];

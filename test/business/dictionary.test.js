@@ -142,7 +142,20 @@ test('removing offending pair removes issue for forks', () => {
     dict.put(key, values[id], id);
   }
 
-  debugger;
   dict.remove(0);
   expect(dict.get(1).issues.length).toBe(0);
+});
+
+test('all function returns list of all pairs in dictionary', () => {
+  let dict = new Dictionary();
+
+  let keys = ['Dark', 'Light'];
+  let values = ['Black', 'White'];
+
+  for (let i = 0; i < keys.length; i++) {
+    dict.put(keys[i], values[i], i);
+  }
+
+  expect(dict.all()[0].key).toBe(keys[0]);
+  expect(dict.all()[1].value).toBe(values[1]);
 });
